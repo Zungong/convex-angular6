@@ -1,0 +1,8 @@
+::ng-deep .progress-bar-in-dt {
+    /* add some padding right to progress bar so that it is not overflowed */
+    padding-right: 1.5rem;
+}
+::ng-deep .ngx-datatable.bootstrap .datatable-footer .page-count {
+    /* remove padding right so that pagination buttons look nice */
+    padding-right: 0;
+}

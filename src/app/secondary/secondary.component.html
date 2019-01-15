@@ -1,0 +1,217 @@
+<section id="secondary-dashboard">
+  <div class="row">
+    <!--Lista de Servidores Virtuales Starts-->
+    <div class="col-xl-4 col-lg-12 col-12">
+        <div class="card" style="height: calc(100% - 36px);">
+            <div class="card-header">
+              <div class="card-title-wrap bar-info">
+                <h4 class="card-title">Lista de Servidores {{ modelType$ == 'fisico' ? 'Fisicos' : modelType$ == 'virtual' ? 'Virtuales' : 'Virtual Plus' }}</h4>
+              </div>
+            </div>
+            <div class="card-body">
+                <div class="card-block">
+                    <input type='text' style='padding:8px;' placeholder='Type to filter the name column...' (keyup)='updateFilter($event)' />
+                    <ngx-datatable #table class="bootstrap selection-cell" [limit]="10" [rows]="rows" [columnMode]="'force'" [columns]="columns" [headerHeight]="50"
+                        [footerHeight]="50" [rowHeight]="50" [selected]="selected" [selectionType]="'cell'" (select)="onSelect($event)"
+                        (activate)="onActivate($event)">
+                    </ngx-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Lista de Servidores Virtuales Ends-->
+    <div class="col-12 col-md-8">
+      <div class="row">
+          <div class="col-lg-6 col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="media align-items-stretch">
+                    <div class="p-2 text-center bg-info rounded-left pt-3">
+                      <i class="icon-user font-large-2 text-white"></i>
+                    </div>
+                    <div class="p-2 media-body">
+                      <h6>Total de Usuarios</h6>
+                      <h5 class="text-bold-400 mb-0">{{ selectedRow.TotalUsers }}</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="col-lg-6 col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="media align-items-stretch">
+                    <div class="p-2 text-center bg-warning rounded-left pt-3">
+                      <i class="ft-bold font-large-2 text-white"></i>
+                    </div>
+                    <div class="p-2 media-body">
+                      <h6>Total de BDs</h6>
+                      <h5 class="text-bold-400 mb-0">{{ selectedRow.TotalDBs }}</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+        <!--Custom content Starts-->
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                  <div class="card-title-wrap bar-warning">
+                    <h4 class="card-title">Información General</h4>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-block">
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">IPv4</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.IPv4 }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">OS</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.OSName ? selectedRow.OSName + ' ' + selectedRow.OSVersion : '' }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">RAM</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.RAM }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">DD</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.DD }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">CPU</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.CPU }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Estatus</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.ServerStatus | titlecase }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Estatus Facturación</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.FinanceStatus | titlecase }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Fecha Expiración</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.CExpirationDate | date:'medium':'UTC' }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>        
+        </div>
+        <!--Custom content Ends-->
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                  <div class="card-title-wrap bar-warning">
+                    <h4 class="card-title">Uso de Recursos</h4>
+                  </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-block">
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Uso CPU</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.CPUUsage }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Uso RAM</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.RAMUsage }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Espacio en Disco</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.DiskFreeSpace }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Uso del disco</small>
+                                </div>
+                                <p class="mb-0">
+                                    <ngb-progressbar showValue="true" type="{{ selectedRow.DiskUsage <= 25 ? 'success' : (selectedRow.DiskUsage <= 50 ? 'info' : (selectedRow.DiskUsage <= 75 ? 'warning' : 'danger')) }}" [value]="selectedRow.DiskUsage || 0"></ngb-progressbar>
+                                </p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Carpeta SQL</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.SQLDataFolderSize ? selectedRow.SQLDataFolderSize + ' GB' : '' }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Carpeta Compac</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.CompacFolderSize ? selectedRow.CompacFolderSize + ' GB' : '' }}</p>
+                            </li>
+                            <li class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <small class="text-muted">Fecha de Captura</small>
+                                </div>
+                                <p class="mb-0">{{ selectedRow.UsageTimeStamp | date:'medium':'UTC' }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>        
+        </div>
+      </div>
+      <div class="card">
+          <!--Versión de sistemas Starts-->
+          <div class="card-header">
+              <div class="card-title-wrap bar-warning">
+                  <h4 class="card-title">Versión de sistemas</h4>
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="card-block">
+                  <div class="table-responsive">
+                      <table id="recent-orders" class="table table-hover table-xl mb-0">
+                          <thead>
+                              <tr>
+                                  <th class="border-top-0">Category</th>
+                                  <th class="border-top-0">App Name</th>
+                                  <th class="border-top-0">App Version</th>
+                                  <th class="border-top-0">App Install Date</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let item of serverIdGroup[selectedRow.ServerID]">
+                                  <td class="text-truncate">{{ item.Category }}</td>
+                                  <td class="text-truncate">{{ item.AppName }}</td>
+                                  <td class="text-truncate">{{ item.AppVersion }}</td>
+                                  <td class="text-truncate">{{ item.AppInstallDate | date }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          <!--Versión de sistemas Ends-->
+      </div>
+    </div>
+  </div>
+</section>

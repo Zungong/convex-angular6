@@ -1,0 +1,233 @@
+<!-- Minimal statistics section start -->
+<section id="minimal-statistics">
+  <div class="row">
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="media align-items-stretch">
+            <div class="p-2 text-center bg-success rounded-left pt-3">
+              <i class="icon-screen-desktop font-large-2 text-white"></i>
+            </div>
+            <div class="p-2 media-body">
+              <h6>Total de Servidores</h6>
+              <h5 class="text-bold-400 mb-0">{{countServer}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="media align-items-stretch">
+            <div class="p-2 text-center bg-info rounded-left pt-3">
+              <i class="icon-user font-large-2 text-white"></i>
+            </div>
+            <div class="p-2 media-body">
+              <h6>Total de Usuarios</h6>
+              <h5 class="text-bold-400 mb-0">{{countUser}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="media align-items-stretch">
+            <div class="p-2 text-center bg-warning rounded-left pt-3">
+              <i class="ft-bold font-large-2 text-white"></i>
+            </div>
+            <div class="p-2 media-body">
+              <h6>Total de BDs</h6>
+              <h5 class="text-bold-400 mb-0">{{countDB}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Pie Chart Starts -->
+    <div class="col-lg-4 col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-wrap bar-success">
+                    <h4 class="card-title">Estatus de Servidores</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-block">
+                    <div id="pie-chart1" class="height-300">
+                        <canvas #chart1="base-chart" baseChart class="chart" [data]="serverStatusChartData" [labels]="serverStatusChartLabels" [options]="serverStatusChartOptions" [chartType]="serverStatusChartType"
+                            (chartHover)="chartHovered($event)" [colors]="serverStatusChartColors" (chartClick)="chartClicked($event)"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pie Chart Ends -->
+    <!-- Pie Chart Starts -->
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+          <div class="card-header">
+              <div class="card-title-wrap bar-success">
+                  <h4 class="card-title">Estatus de Cobranza</h4>
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="card-block">
+                  <div id="pie-chart2" class="height-300">
+                      <canvas #chart2="base-chart" baseChart class="chart" [data]="collectionStatusChartData" [labels]="collectionStatusChartLabels" [options]="collectionStatusChartOptions" [chartType]="collectionStatusChartType"
+                          [colors]="collectionStatusChartColors"></canvas>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- Pie Chart Ends -->
+    <!-- Expiration List Starts -->
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-wrap bar-primary">
+            <h4 class="card-title">Lista de Vencimientos</h4>
+          </div>
+          <a class="heading-elements-toggle">
+            <i class="la la-ellipsis-v font-medium-3"></i>
+          </a>
+        </div>
+        <div class="card-content mt-1">
+          <ngx-datatable #table class="bootstrap" [rows]="expireList" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5">
+              <ngx-datatable-column name="Server ID" prop="ServerID" [width]="1">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Vencimiento" prop="CExpirationDate" [width]="41">
+                <ng-template let-value="value" ngx-datatable-cell-template>
+                  {{ value | date }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Proximity" prop="Proximity" cellClass="progress-bar-in-dt"  [width]="70">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  <div class="mt-1">
+                    <!-- Calculate the progress bar percentage based on expire days -->
+                    <ngb-progressbar type="{{ row.Proximity <= 5 ? 'danger' : (row.Proximity <= 10 ? 'warning' : 'success') }}" [value]="row.Proximity < 0 ? 100 : 100 - row.Proximity / 15 * 100" [striped]="true" class="progress-bar-md"></ngb-progressbar>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+      </div>
+    </div>
+    <!-- Expiration List Ends -->
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-12">
+      <!-- Server List Starts -->
+      <div class="card">
+          <div class="card-header">
+              <div class="card-title-wrap bar-warning">
+                  <h4 class="card-title">Resumen de Servidores por Estatus &nbsp; <button class="btn btn-sm btn-outline-info round mb-0" type="button" *ngIf="clickedStatus != ''" (click)="clearFilter()">Mostrar todo</button></h4>
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="card-block">
+                  <ngx-datatable #table2 class="bootstrap" [rows]="serverList" [columnMode]="'force'"
+                      [headerHeight]="'auto'" [footerHeight]="50" [rowHeight]="'auto'" [limit]="10">
+                      <ngx-datatable-column name="Estatus" prop="ServerStatus" [width]="100">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <!-- We show proper icon for server status -->
+                            <i class="fa fa-dot-circle-o {{ row.ServerStatus == 'UP' ? 'success' : (row.ServerStatus == 'DOWN' ? 'danger' : 'warning') }} font-medium-1 mr-1"></i> {{ row.ServerStatus | titlecase }}
+                        </ng-template>
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Server ID" prop="ServerID" [width]="70">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="IP" prop="IPv4" [width]="110">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Name" prop="Name" [width]="255">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Total Users" prop="TotalUsers" [width]="70">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Total DBs" prop="TotalDBs" [width]="70">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Disk Free Space" prop="DiskFreeSpace" [width]="90">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Status Time" prop="StatusTimeStamp" [width]="150">
+                          <ng-template let-value="value" ngx-datatable-cell-template>
+                              {{ value | date:'short':'UTC' }}
+                          </ng-template>
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Usage Time" prop="UsageTimeStamp" [width]="150">
+                          <ng-template let-value="value" ngx-datatable-cell-template>
+                              {{ value | date:'short':'UTC' }}
+                          </ng-template>
+                      </ngx-datatable-column>
+                  </ngx-datatable>
+              </div>
+          </div>
+      </div>
+      <!-- Server List Ends -->
+    </div>
+  </div>
+  <div class="row">
+    <!--List Group with badges Starts-->
+    <div class="col-xl-4 col-lg-12 col-12">
+        <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap bar-warning">
+                <h4 class="card-title">Aplicaciones Instaladas</h4>
+                  <select class="form-control" id="basicSelect" #selectCategory (change)="changeCategory(selectCategory.value)">
+                    <option value="CONTPAQi" selected>CONTPAQi</option>
+                    <option value="SQLSERVER">SQLSERVER</option>
+                    <option value="OFFICE">OFFICE</option>
+                    <option value="OTRO">OTRO</option>
+                  </select>
+              </div>
+            </div>
+            <div class="card-body">
+                <div class="card-block">
+                    <ul class="list-group">
+                        <li class="list-group-item" *ngFor="let item of appList.counts; let i = index">
+                            <span class="badge badge-{{ ['primary', 'danger', 'success', 'warning', 'info'][i % 5] }} mr-2">{{ item.cnt }}</span> {{ item.AppName }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--List Group with badges Ends-->
+    <div class="col-12 col-md-8">
+      <!-- Application List Ends -->
+      <div class="card">
+          <div class="card-header">
+              <div class="card-title-wrap bar-warning">
+                  <h4 class="card-title">Versión de sistemas por categoría</h4>
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="card-block">
+                  <ngx-datatable #table3 class="bootstrap" [rows]="appList.list" [columnMode]="'force'"
+                      [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="10">
+                      <ngx-datatable-column name="Count" prop="cnt" [width]="40">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="Server ID" prop="ServerID" [width]="60">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="App Name" prop="AppName" [width]="300">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="App Version" prop="AppVersion" [width]="80">
+                      </ngx-datatable-column>
+                      <ngx-datatable-column name="App Install Date" prop="AppInstallDate" [width]="130">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                          {{ value | date:'short':'UTC' }}
+                        </ng-template>
+                      </ngx-datatable-column>
+                  </ngx-datatable>
+              </div>
+          </div>
+      </div>
+      <!-- Application List Ends -->
+    </div>
+  </div>
+</section>
+<!-- // Minimal statistics section end -->
